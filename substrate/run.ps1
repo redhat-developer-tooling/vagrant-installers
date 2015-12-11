@@ -33,7 +33,7 @@ $arguments = @(
     "$($Dir)/manifests/init.pp"
 )
 
-$path = "C:\Program Files (x86)\Puppet Labs\Puppet\bin\puppet.bat"
+$path = "C:\Program Files\Puppet Labs\Puppet\bin\puppet.bat"
 
 Set-Location $Dir
 Start-Process -NoNewWindow -Wait -ArgumentList $arguments -FilePath $path
