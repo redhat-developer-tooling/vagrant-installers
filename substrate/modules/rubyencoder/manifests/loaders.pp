@@ -19,6 +19,10 @@ class rubyencoder::loaders(
     $owner = "root"
     $group = "wheel"
     $mode  = "0644"
+  } elsif $kernel == 'Windows' {
+    $owner = "Administrators"
+    $group = "Administrator"
+    $mode = "0644"
   } else {
     $owner = undef
     $group = undef

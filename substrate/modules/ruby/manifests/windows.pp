@@ -37,6 +37,9 @@ class ruby::windows(
   file { "${install_dir}/lib/ruby/2.0.0/dl.rb":
     source  => "puppet:///modules/ruby/modified_dl.rb",
     require => Exec["install-ruby"],
+    owner => "Administrators",
+    group => "Administrator",
+    mode => 644
   }
 
   #------------------------------------------------------------------
@@ -60,6 +63,9 @@ class ruby::windows(
   file { "${install_dir}/config.yml":
     content => template("ruby/windows/config.yml.erb"),
     require => Exec["extract-devkit"],
+    owner => "Administrators",
+    group => "Administrator",
+    mode => 644
   }
 
   exec { "install-devkit":
@@ -76,5 +82,8 @@ class ruby::windows(
     backup  => false,
     content => template("ruby/windows/devkit.rb.erb"),
     require => Exec["install-devkit"],
+    owner => "Administrators",
+    group => "Administrator",
+    mode => 644
   }
 }

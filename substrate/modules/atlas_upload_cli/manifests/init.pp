@@ -20,5 +20,8 @@ class atlas_upload_cli($install_path) {
 
   file { $install_path:
     source => "puppet:///modules/atlas_upload_cli/${source_filename}/atlas-upload${source_suffix}",
+    owner => "Administrators",
+    group => "Administrator",
+    mode => 644
   }
 }

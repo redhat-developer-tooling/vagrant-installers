@@ -37,7 +37,7 @@ class vagrant_substrate::package {
       }
     }
 
-    'windows': {
+    'Windows': {
       powershell { "package-substrate":
         content        => template("vagrant_substrate/package_windows.ps1.erb"),
         creates        => $package_path,
