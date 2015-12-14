@@ -36,7 +36,25 @@ class vagrant_substrate::staging::windows {
     install_dir    => $embedded_dir,
   }
 
-  class { "rubyencoder::loaders":
-    path => $embedded_dir,
+  class { "vagrant":
+    embedded_dir   => $embedded_dir,
+    file_cache_dir => $cache_dir,
+    revision       => "1.7.4",
+    require        => Class["ruby::windows"],
+  }
+
+  #------------------------------------------------------------------
+  # Bin wrappers
+  #------------------------------------------------------------------
+  # Batch wrapper so that Vagrant can be executed from normal cmd.exe
+  file { "${staging_dir}/bin/vagrant.bat":
+    content => template("vagrant_substrate/vagrant.bat.erb"),
+    require => Class["vagrant"],
+  }
+
+  # Normal Bash wrapper for Cygwin installations
+  file { "${staging_dir}/bin/vagrant":
+    content => template("vagrant_substrate/vagrant.erb"),
+    require => Class["vagrant"],
   }
 }
