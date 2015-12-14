@@ -14,7 +14,7 @@ class vagrant(
   }
 
   $gem_renamer = path("${file_cache_dir}/vagrant_gem_rename.rb")
-  $source_url = "https://github.com/mitchellh/vagrant/archive/${revision}.${extension}"
+  $source_url = "https://github.com/mitchellh/vagrant/archive/v${revision}.${extension}"
   $source_file_path = path("${file_cache_dir}/vagrant-${revision}.${extension}")
   $source_dir_path  = path("${file_cache_dir}/vagrant-${revision}")
   $vagrant_gem_path = path("${source_dir_path}/vagrant.gem")
@@ -54,8 +54,9 @@ class vagrant(
   # Download and Compile Vagrant
   #------------------------------------------------------------------
   download { "vagrant":
-    source      => $source_url,
-    destination => $source_file_path,
+    source         => $source_url,
+    destination    => $source_file_path,
+    file_cache_dir => $file_cache_dir
   }
 
   if $operatingsystem == 'windows' {
@@ -63,6 +64,7 @@ class vagrant(
     powershell { "extract-vagrant":
       content => template("vagrant/windows_extract.erb"),
       creates => $source_dir_path,
+      file_cache_dir => $file_cache_dir,
       require => Download["vagrant"],
       before  => Exec["extract-vagrant"],
     }
