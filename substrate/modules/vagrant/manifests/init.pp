@@ -22,8 +22,16 @@ class vagrant(
   if $operatingsystem == 'windows' {
     $extract_command   = "cmd.exe /C exit /B 0"
     $gem_command       = "${embedded_dir}\\bin\\gem.bat"
+    $install__bundler_command = "cmd.exe /C ${gem_command} install bundler -v 1.10.5"
     $gem_build_command = "cmd.exe /C ${gem_command} build vagrant.gemspec"
     $ruby_command      = "cmd.exe /C ${embedded_dir}\\bin\\ruby.exe"
+    $bundle_command    = "${embedded_dir}\\bin\\bundle"
+    $rake_command      = "${embedded_dir}\\bin\\rake"
+    $bundle_install_command = "${ruby_command} ${bundle_command} install"
+    $rake_install_command = "${ruby_command} ${rake_command} install"
+    $git_path          = path("${file_cache_dir}/PortableGit/bin")
+    $cmd_path          = "C:\\Windows\\System32"
+    $windows_path      = "${git_path};${cmd_path};${embedded_dir}\\bin;"
   } else {
     $extract_command   = "tar xvzf ${source_file_path}"
     $gem_command       = "${embedded_dir}/bin/gem"
@@ -77,37 +85,23 @@ class vagrant(
     require => Download["vagrant"],
   }
 
-  exec { "vagrant-gem-build":
-    command => $gem_build_command,
-    creates => $vagrant_gem_path,
+  exec { "gem-install-bundler":
+    command => $install__bundler_command,
     cwd     => $source_dir_path,
     require => Exec["extract-vagrant"],
   }
 
-  file { $gem_renamer:
-    content => template("vagrant/gem_renamer.erb"),
-    mode    => "0755",
+  exec { "bundle-install":
+    command => $bundle_install_command,
+    cwd     => $source_dir_path,
+    path    => $windows_path,
+    require => Exec["gem-install-bundler"],
   }
 
-  exec { "vagrant-gem-rename":
-    command => "${ruby_command} ${gem_renamer} ${source_dir_path}",
-    creates => $vagrant_gem_path,
-    require => [
-      Exec["vagrant-gem-build"],
-      File[$gem_renamer],
-    ],
-  }
-
-  #------------------------------------------------------------------
-  # Install the gem into the proper location
-  #------------------------------------------------------------------
-  exec { "vagrant-gem-install":
-    command     => "${gem_command} install ${vagrant_gem_path} --no-ri --no-rdoc",
-    creates     => "${embedded_dir}/gems/bin/vagrant",
-    environment => autotools_flatten_environment($merged_environment),
-    logoutput   => true,
-    tries       => 3,
-    try_sleep   => 10,
-    require     => Exec["vagrant-gem-rename"],
+  exec { "rake-install":
+    command => $rake_install_command,
+    cwd     => $source_dir_path,
+    path    => $windows_path,
+    require => Exec["bundle-install"],
   }
 }
