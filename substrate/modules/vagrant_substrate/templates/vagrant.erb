@@ -20,7 +20,7 @@ cd "$CURDIR"
 EMBEDDED_DIR="${DIR}/../embedded"
 
 # Export gem paths so that we use the isolated gems.
-export GEM_PATH="${EMBEDDED_DIR}/gems"
+export GEM_PATH="${EMBEDDED_DIR}/lib/ruby/gems/2.0.0"
 export GEM_HOME="${GEM_PATH}"
 export GEMRC="${EMBEDDED_DIR}/etc/gemrc"
 
@@ -91,7 +91,7 @@ case $OS in
 		# In Linux-like environments on Windows, we want to add the
 		# Windows path to the PATH so that bsdtar and friends can
 		# be found.
-		export PATH="${EMBEDDED_DIR}/gnuwin32/bin:${PATH}"
+		export PATH="${EMBEDDED_DIR}/mingw/bin:${PATH}"
 		;;
 	Darwin*)
 		# This is required until we use Ruby 2.2 to avoid an issue with
