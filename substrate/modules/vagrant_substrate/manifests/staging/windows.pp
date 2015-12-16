@@ -20,12 +20,6 @@ class vagrant_substrate::staging::windows {
     install_path => "${embedded_dir}\\bin\\atlas-upload",
   }
 
-  class { "bsdtar":
-    file_cache_dir => $cache_dir,
-    install_dir    => $gnuwin32_dir,
-    require        => Util::Recursive_Directory[$gnuwin32_dir],
-  }
-
   class { "curl":
     file_cache_dir => $cache_dir,
     install_dir    => "${embedded_dir}\\bin",
@@ -36,11 +30,18 @@ class vagrant_substrate::staging::windows {
     install_dir    => $embedded_dir,
   }
 
+  class { "git::windows":
+    file_cache_dir => $cache_dir,
+  }
+
   class { "vagrant":
     embedded_dir   => $embedded_dir,
     file_cache_dir => $cache_dir,
     revision       => "1.7.4",
-    require        => Class["ruby::windows"],
+    require        => [
+      Class["ruby::windows"],
+      Class["git::windows"],
+    ],
   }
 
   #------------------------------------------------------------------
